@@ -1,4 +1,4 @@
-﻿# Twitch Monitor
+﻿# Twitch Chat Control
 🤖 **A Twitch bot that consumes commands on chat to send keystrokes on the local machine.**
 
 ### Feeling generous?
