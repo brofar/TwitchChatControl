@@ -65,8 +65,6 @@ namespace TwitchChatControl
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            Console.WriteLine(e.ChatMessage.Message);
-
             // Fire event (call delegate)
             OnBotMessageReceived?.Invoke(this, e.ChatMessage.Message);
         }

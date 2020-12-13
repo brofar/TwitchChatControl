@@ -12,3 +12,7 @@
 * Finish the damn bot.
 * Installation instructions.
 * Configuration instructions.
+* Handle decimal numbers (reject them)
+
+## Contributing
+Notes and stuff can be found in the Notes folder.
