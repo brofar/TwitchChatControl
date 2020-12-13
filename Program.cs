@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using WindowsInput;
 using WindowsInput.Native;
-using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Linq;
 using System.Security;
@@ -14,14 +13,11 @@ namespace TwitchChatControl
 {
     class Program
     {
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        static extern short VkKeyScan(char ch);
-
-        [DllImport("user32.dll")]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
-
         // Keymap
         static Dictionary<string, string> keyMap;
+
+        static vKeys keyboard = new vKeys();
+
         static void Main(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -111,12 +107,6 @@ namespace TwitchChatControl
 
             // Filter any special keys
             var vkKey = SpecialVKeys(keyPress);
-
-            // If there was no match
-            if (vkKey == VirtualKeyCode.VOLUME_MUTE)
-            {
-                vkKey = (VirtualKeyCode)VkKeyScan(keyPress.ToCharArray()[0]);
-            }
 
             // Put it all together
             for (var i = 1; i <= repetitions; i++)
@@ -224,56 +214,11 @@ namespace TwitchChatControl
         /// </returns>
         static VirtualKeyCode SpecialVKeys (string input)
         {
-            switch (input.ToUpper())
+            input = input.ToUpper();
+
+            if (keyboard.keyboardMapping.ContainsKey(input))
             {
-                case "UP":
-                    return VirtualKeyCode.UP;
-
-                case "DOWN":
-                    return VirtualKeyCode.DOWN;
-
-                case "LEFT":
-                    return VirtualKeyCode.LEFT;
-
-                case "RIGHT":
-                    return VirtualKeyCode.RIGHT;
-
-                case "F1":
-                    return VirtualKeyCode.F1;
-
-                case "F2":
-                    return VirtualKeyCode.F2;
-
-                case "F3":
-                    return VirtualKeyCode.F3;
-
-                case "F4":
-                    return VirtualKeyCode.F4;
-
-                case "F5":
-                    return VirtualKeyCode.F5;
-
-                case "F6":
-                    return VirtualKeyCode.F6;
-
-                case "F7":
-                    return VirtualKeyCode.F7;
-
-                case "F8":
-                    return VirtualKeyCode.F8;
-
-                case "F9":
-                    return VirtualKeyCode.F9;
-
-                case "F10":
-                    return VirtualKeyCode.F10;
-
-                case "F11":
-                    return VirtualKeyCode.F11;
-
-                case "F12":
-                    return VirtualKeyCode.F12;
-
+                return keyboard.keyboardMapping[input];
             }
 
             // VirtualKeyCode is not nullable, so set the value to something we'll never use as a substitute for null.
