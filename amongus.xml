@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<keyMap>
+  <Up>w</Up>
+  <Down>s</Down>
+  <Left>a</Left>
+  <Right>d</Right>
+  <Kill>q</Kill>
+  <Use>e</Use>
+  <Report>r</Report>
+</keyMap>

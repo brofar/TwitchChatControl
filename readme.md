@@ -28,3 +28,6 @@ To specify a key map for the bot to use, create an XML file in the following for
 ```
 
 Example: See ffx.xml
+
+## Future Improvements
+* Hook for channel point redemptions

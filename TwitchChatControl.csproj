@@ -15,6 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="amongus.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ffx.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
