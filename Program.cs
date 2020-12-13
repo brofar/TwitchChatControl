@@ -7,6 +7,8 @@ using WindowsInput.Native;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Linq;
+using System.Security;
+using System.IO;
 
 namespace TwitchChatControl
 {
@@ -22,7 +24,14 @@ namespace TwitchChatControl
         static Dictionary<string, string> keyMap;
         static void Main(string[] args)
         {
-            Program.keyMap = LoadKeyMap();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Twitch Chat Control");
+            Console.WriteLine("Specify keymap file:");
+            Console.ResetColor();
+
+            string fileMapXml = Console.ReadLine();
+
+            Program.keyMap = LoadKeyMap(fileMapXml);
 
             foreach (KeyValuePair<string, string> kvp in keyMap)
             {
@@ -247,10 +256,48 @@ namespace TwitchChatControl
             // VirtualKeyCode is not nullable, so set the value to something we'll never use as a substitute for null.
             return VirtualKeyCode.VOLUME_MUTE;
         }
-
-        static Dictionary<string, string> LoadKeyMap()
+        /// <summary>
+        /// Reads a keymap from an xml file
+        /// </summary>
+        /// <remarks>
+        /// Need to figure out how to handle symbols.
+        /// </remarks>
+        /// <param name="input">A string.</param>
+        /// <returns>
+        /// A VirtualKeyCode. Returns VirtualKeyCode.VOLUME_MUTE if no match is found.
+        /// </returns>
+        static Dictionary<string, string> LoadKeyMap(string filename)
         {
-            var doc = XDocument.Load(@".\keymap.xml");
+            if (filename.EndsWith(".xml")) filename = filename.Substring(0, filename.Length - 4);
+
+            var doc = new XDocument();
+            try
+            {
+                doc = XDocument.Load($@".\{filename}.xml");
+            }
+            catch (ArgumentNullException)
+            {
+                // The input value is null.
+                Console.Write($"[ERROR] No file specified.");
+                Console.ReadLine();
+                Environment.Exit(1);
+            }
+            catch (SecurityException)
+            {
+                // The XmlReader does not have sufficient permissions 
+                // to access the location of the XML data.
+                Console.Write($"[ERROR] Non-sufficient permissions to access {filename}.xml.");
+                Console.ReadLine();
+                Environment.Exit(1);
+            }
+            catch (FileNotFoundException)
+            {
+                // The underlying file of the path cannot be found
+                Console.Write($"[ERROR] {filename}.xml not found in program directory.");
+                Console.ReadLine();
+                Environment.Exit(1);
+            }
+            
             var rootNodes = doc.Root.DescendantNodes().OfType<XElement>();
             var allItems = rootNodes.ToDictionary(n => n.Name.ToString().ToLower(), n => n.Value.ToString().ToLower());
             return allItems;

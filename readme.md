@@ -12,7 +12,8 @@
 * Finish the damn bot.
 * Installation instructions.
 * Configuration instructions.
-* Handle decimal numbers (reject them)
+* Handle decimal numbers/symbols in input (reject them)
+* Handle sequences of commands
 
 ## Contributing
 Notes and stuff can be found in the Notes folder.
