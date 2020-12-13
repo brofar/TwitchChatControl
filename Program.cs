@@ -50,10 +50,22 @@ namespace TwitchChatControl
             Console.ReadLine();
         }
 
+        /// <summary>
+        /// Event handler for Twitch chat messages.
+        /// </summary>
         static void bot_OnBotMessageReceived (object sender, string chatMessage)
         {
             // Decode commands into keystrokes here.
+            MessageToKeystroke(chatMessage, 100);
+        }
 
+        /// <summary>
+        /// Converts commands from Twitch chat into keystrokes
+        /// </summary>
+        /// <param name="chatMessage">A chat message string.</param>
+        /// <param name="postKeyDelayMs">How long to wait between keystrokes (ms).</param>
+        static void MessageToKeystroke(string chatMessage, int postKeyDelayMs)
+        {
             /* Possible syntax:
              * [number of times to press][button to press][seconds to hold]
              * Examples:
@@ -62,11 +74,8 @@ namespace TwitchChatControl
              * x4 = "hold x button for 4 seconds"
              */
 
-            // Remove leading or trailing spaces.
-            chatMessage.Trim();
-
-            // Convert chat message to lowercase for matching
-            chatMessage.ToLower();
+            // Format message
+            chatMessage.Trim().ToLower();
 
             // Check message validity for further processing
             bool isValidMessage = ValidMessage(chatMessage);
@@ -78,6 +87,9 @@ namespace TwitchChatControl
             Console.WriteLine($"[DEBUG] Message: {chatMessage}");
 
             var split = SplitString(chatMessage);
+
+            // Abort on bad string.
+            if (split.Item2 == null) return;
 
             // Prevent outrageous numbers
             int repetitions = (split.Item1 > 0 && split.Item1 <= 20) ? split.Item1 : 1;
@@ -101,7 +113,7 @@ namespace TwitchChatControl
             var vkKey = SpecialVKeys(keyPress);
 
             // If there was no match
-            if(vkKey == VirtualKeyCode.VOLUME_MUTE)
+            if (vkKey == VirtualKeyCode.VOLUME_MUTE)
             {
                 vkKey = (VirtualKeyCode)VkKeyScan(keyPress.ToCharArray()[0]);
             }
@@ -111,11 +123,13 @@ namespace TwitchChatControl
             {
                 Console.Write($"[DEBUG] Sending {keyPress} for {holdTimeMs}ms.");
 
+                // Add delay between keypresses- some games need keys 
+                // to be pressed for a bit before they pick them up.
                 input.Keyboard.KeyDown(vkKey)
                 .Sleep(holdTimeMs)
                 .KeyUp(vkKey)
-                .Sleep(50); // Delay for next keypress.
-                    
+                .Sleep(postKeyDelayMs); // Delay for next keypress.
+
                 Console.WriteLine($" ... done.");
             }
         }
@@ -173,14 +187,22 @@ namespace TwitchChatControl
                 }
                 else if(char.IsNumber(c))
                 {
+                    // If we haven't had letters yet, it's the first number.
                     if (letterReached)
                     {
                         three += c;
                     }
+                    // If we have had letters already, it's the second number.
                     else
                     {
                         one += c;
                     }
+                }
+                else
+                {
+                    // Neither letter nor number. Probably symbol so invalidate entire message.
+                    Console.WriteLine($"[DEBUG] {c} is neither a letter nor number. Skip processing.");
+                    return new Tuple<int, string, int>(0, null, 0);
                 }
             }
 
@@ -189,6 +211,7 @@ namespace TwitchChatControl
 
             return new Tuple<int, string, int>(intOne, two, intThree);
         }
+
         /// <summary>
         /// Converts certain strings to VK codes.
         /// </summary>

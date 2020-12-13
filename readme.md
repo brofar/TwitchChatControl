@@ -9,11 +9,20 @@
 * Sends keystrokes on your local machine in response to commands (e.g. have viewers control the game).
 
 ## To Do
-* Finish the damn bot.
+* ~~Finish the damn bot.~~
 * Installation instructions.
 * Configuration instructions.
-* Handle decimal numbers/symbols in input (reject them)
+* ~~Handle decimal numbers/symbols in input (reject them)~~
 * Handle sequences of commands
 
-## Contributing
-Notes and stuff can be found in the Notes folder.
+## Installation
+See the [Releases page](https://github.com/brofar/TwitchChatControl/releases), download the latest file, extract, configure, run.
+
+## Configuration
+To specify a key map for the bot to use, create an XML file in the following format:
+```<?xml version="1.0" encoding="utf-8" ?>
+<keyMap>
+    <[chat message]>[bot key]</[chat message]>
+</keyMap>```
+
+Example: See `ffx.xml`
