@@ -20,9 +20,11 @@ See the [Releases page](https://github.com/brofar/TwitchChatControl/releases), d
 
 ## Configuration
 To specify a key map for the bot to use, create an XML file in the following format:
-```<?xml version="1.0" encoding="utf-8" ?>
+```
+<?xml version="1.0" encoding="utf-8" ?>
 <keyMap>
     <[chat message]>[bot key]</[chat message]>
-</keyMap>```
+</keyMap>
+```
 
-Example: See `ffx.xml`
+Example: See ffx.xml
