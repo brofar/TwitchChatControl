@@ -259,12 +259,9 @@ namespace TwitchChatControl
         /// <summary>
         /// Reads a keymap from an xml file
         /// </summary>
-        /// <remarks>
-        /// Need to figure out how to handle symbols.
-        /// </remarks>
-        /// <param name="input">A string.</param>
+        /// <param name="filename">A filename string.</param>
         /// <returns>
-        /// A VirtualKeyCode. Returns VirtualKeyCode.VOLUME_MUTE if no match is found.
+        /// A dictionary containing the keys/values from the XML file.
         /// </returns>
         static Dictionary<string, string> LoadKeyMap(string filename)
         {
