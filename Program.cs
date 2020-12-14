@@ -19,11 +19,10 @@ namespace TwitchChatControl
 
         static vKeys keyboard = new vKeys();
 
-        // If you plan to do this more than once, create and store a Regex instance. This will save the overhead of constructing it every time, which is more expensive than you might think.
+        // If you plan to do this more than once, create and store a Regex instance. This will save the 
+        // overhead of constructing it every time, which is more expensive than you might think.
+        // https://stackoverflow.com/questions/6219454/efficient-way-to-remove-all-whitespace-from-string
         private static readonly Regex sWhitespace = new Regex(@"\s+"); 
-        public static string ReplaceWhitespace(string input, string replacement) { 
-            return sWhitespace.Replace(input, replacement); 
-        }
 
         static void Main(string[] args)
         {
@@ -85,7 +84,7 @@ namespace TwitchChatControl
              */
 
             // Format message
-            chatMessage.Trim().ToLower();
+            chatMessage = ReplaceWhitespace(chatMessage.Trim().ToLower(), "");
 
             // Check message validity for further processing
             bool isValidMessage = ValidMessage(chatMessage);
@@ -281,6 +280,18 @@ namespace TwitchChatControl
             var rootNodes = doc.Root.DescendantNodes().OfType<XElement>();
             var allItems = rootNodes.ToDictionary(n => n.Name.ToString().ToLower(), n => n.Value.ToString().ToLower());
             return allItems;
+        }
+        /// <summary>
+        /// Replaces whitespace in a string
+        /// </summary>
+        /// <param name="input">A string.</param>
+        /// <param name="replacement">A value that will replace all whitespace.</param>
+        /// <returns>
+        /// The string with whitespace replaced.
+        /// </returns>
+        static string ReplaceWhitespace(string input, string replacement)
+        {
+            return sWhitespace.Replace(input, replacement);
         }
     }
 }
