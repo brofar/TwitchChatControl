@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using System.Linq;
 using System.Security;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace TwitchChatControl
 {
@@ -17,6 +18,12 @@ namespace TwitchChatControl
         static Dictionary<string, string> keyMap;
 
         static vKeys keyboard = new vKeys();
+
+        // If you plan to do this more than once, create and store a Regex instance. This will save the overhead of constructing it every time, which is more expensive than you might think.
+        private static readonly Regex sWhitespace = new Regex(@"\s+"); 
+        public static string ReplaceWhitespace(string input, string replacement) { 
+            return sWhitespace.Replace(input, replacement); 
+        }
 
         static void Main(string[] args)
         {
@@ -43,7 +50,14 @@ namespace TwitchChatControl
             var bot = new Bot(username, userToken, twitchChannel);
             bot.OnBotMessageReceived += bot_OnBotMessageReceived;
 
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Hit enter at any time to exit.");
+            Console.ResetColor();
+
+
             Console.ReadLine();
+
+            bot.sendMessage(twitchChannel, "FFX bot deactivated.");
         }
 
         /// <summary>
@@ -52,7 +66,7 @@ namespace TwitchChatControl
         static void bot_OnBotMessageReceived (object sender, string chatMessage)
         {
             // Decode commands into keystrokes here.
-            MessageToKeystroke(chatMessage, 100);
+            MessageToKeystroke(chatMessage, 250);
         }
 
         /// <summary>
@@ -88,10 +102,10 @@ namespace TwitchChatControl
             if (split.Item2 == null) return;
 
             // Prevent outrageous numbers
-            int repetitions = (split.Item1 > 0 && split.Item1 <= 20) ? split.Item1 : 1;
+            int repetitions = (split.Item1 > 0 && split.Item1 <= 10) ? split.Item1 : 1;
 
             // If keypresses are shorter than 50ms, some games don't pick them up.
-            int holdTimeMs = (split.Item3 > 0 && split.Item3 <= 10) ? split.Item3 * 1000 : 50;
+            int holdTimeMs = (split.Item3 > 0 && split.Item3 <= 3) ? split.Item3 * 1000 : 50;
 
             // The actual command itself.
             string keyStroke = split.Item2.ToLower();
@@ -224,6 +238,7 @@ namespace TwitchChatControl
             // VirtualKeyCode is not nullable, so set the value to something we'll never use as a substitute for null.
             return VirtualKeyCode.VOLUME_MUTE;
         }
+
         /// <summary>
         /// Reads a keymap from an xml file
         /// </summary>

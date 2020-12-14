@@ -10,8 +10,8 @@
 
 ## To Do
 * ~~Finish the damn bot.~~
-* Installation instructions.
-* Configuration instructions.
+* ~~Installation instructions.~~
+* ~~Configuration instructions.~~
 * ~~Handle decimal numbers/symbols in input (reject them)~~
 * Handle sequences of commands
 
