@@ -16,8 +16,13 @@ namespace TwitchChatControl
     {
         // Keymap
         static Dictionary<string, string> keyMap;
-
         static vKeys keyboard = new vKeys();
+
+        static string username, userToken, twitchChannel;
+        static Bot bot;
+
+        static int maxRepetitions = 10;
+        static int maxHoldSecs = 3;
 
         // If you plan to do this more than once, create and store a Regex instance. This will save the 
         // overhead of constructing it every time, which is more expensive than you might think.
@@ -42,11 +47,11 @@ namespace TwitchChatControl
 
             NameValueCollection settings = ConfigurationManager.AppSettings;
 
-            string username = settings.Get("username");
-            string userToken = settings.Get("token");
-            string twitchChannel = settings.Get("channel");
+            username = settings.Get("username");
+            userToken = settings.Get("token");
+            twitchChannel = settings.Get("channel");
 
-            var bot = new Bot(username, userToken, twitchChannel);
+            bot = new Bot(username, userToken, twitchChannel);
             bot.OnBotMessageReceived += bot_OnBotMessageReceived;
 
             Console.ForegroundColor = ConsoleColor.Red;
@@ -101,10 +106,21 @@ namespace TwitchChatControl
             if (split.Item2 == null) return;
 
             // Prevent outrageous numbers
-            int repetitions = (split.Item1 > 0 && split.Item1 <= 10) ? split.Item1 : 1;
+            if(split.Item1 > maxRepetitions)
+            {
+                bot.sendMessage(twitchChannel, $"Buttons can be repeated a maximum of {maxRepetitions} times.");
+                return;
+            }
+            else if (split.Item3 > maxHoldSecs)
+            {
+                bot.sendMessage(twitchChannel, $"Buttons can be held a maximum of {maxHoldSecs} seconds.");
+                return;
+            }
+            
+            int repetitions = (split.Item1 > 0) ? split.Item1 : 1;
 
             // If keypresses are shorter than 50ms, some games don't pick them up.
-            int holdTimeMs = (split.Item3 > 0 && split.Item3 <= 3) ? split.Item3 * 1000 : 50;
+            int holdTimeMs = (split.Item3 > 0) ? split.Item3 * 1000 : 50;
 
             // The actual command itself.
             string keyStroke = split.Item2.ToLower();
