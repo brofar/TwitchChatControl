@@ -11,7 +11,7 @@
 ## To Do
 * ~~Finish the damn bot.~~
 * ~~Installation instructions.~~
-* ~~Configuration instructions.~~
+* Configuration/Setup instructions (Adding to Twitch).
 * ~~Handle decimal numbers/symbols in input (reject them)~~
 * Handle sequences of commands
 
