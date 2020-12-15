@@ -21,8 +21,7 @@ namespace TwitchChatControl
         static string username, userToken, twitchChannel;
         static Bot bot;
 
-        static int maxRepetitions = 10;
-        static int maxHoldSecs = 3;
+        static int maxCommandTimeSecs = 10;
 
         // If you plan to do this more than once, create and store a Regex instance. This will save the 
         // overhead of constructing it every time, which is more expensive than you might think.
@@ -103,23 +102,20 @@ namespace TwitchChatControl
 
             // Abort on bad string.
             if (split.Item2 == null) return;
-
-            // Prevent outrageous numbers
-            if(split.Item1 > maxRepetitions)
-            {
-                bot.sendMessage(twitchChannel, $"Buttons can be repeated a maximum of {maxRepetitions} times.");
-                return;
-            }
-            else if (split.Item3 > maxHoldSecs)
-            {
-                bot.sendMessage(twitchChannel, $"Buttons can be held a maximum of {maxHoldSecs} seconds.");
-                return;
-            }
             
             int repetitions = (split.Item1 > 0) ? split.Item1 : 1;
 
             // If keypresses are shorter than 50ms, some games don't pick them up.
             int holdTimeMs = (split.Item3 > 0) ? split.Item3 * 1000 : 75;
+
+            double executionTimeSecs = repetitions * ((holdTimeMs + postKeyDelayMs) / 1000.0);
+
+            // Prevent outrageous numbers
+            if (executionTimeSecs > maxCommandTimeSecs)
+            {
+                bot.sendMessage(twitchChannel, $"Commands must total less than {maxCommandTimeSecs} seconds to do. Your command would have taken {Math.Round(executionTimeSecs, 0)} seconds.");
+                return;
+            }
 
             // The actual command itself.
             string keyStroke = split.Item2.ToLower();
