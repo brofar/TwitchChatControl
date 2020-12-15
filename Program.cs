@@ -58,10 +58,9 @@ namespace TwitchChatControl
             Console.WriteLine("Hit enter at any time to exit.");
             Console.ResetColor();
 
-
             Console.ReadLine();
 
-            bot.sendMessage(twitchChannel, "FFX bot deactivated.");
+            bot.sendMessage(twitchChannel, "Chat commands deactivated.");
         }
 
         /// <summary>
@@ -70,7 +69,7 @@ namespace TwitchChatControl
         static void bot_OnBotMessageReceived (object sender, string chatMessage)
         {
             // Decode commands into keystrokes here.
-            MessageToKeystroke(chatMessage, 250);
+            MessageToKeystroke(chatMessage, 300);
         }
 
         /// <summary>
@@ -120,7 +119,7 @@ namespace TwitchChatControl
             int repetitions = (split.Item1 > 0) ? split.Item1 : 1;
 
             // If keypresses are shorter than 50ms, some games don't pick them up.
-            int holdTimeMs = (split.Item3 > 0) ? split.Item3 * 1000 : 50;
+            int holdTimeMs = (split.Item3 > 0) ? split.Item3 * 1000 : 75;
 
             // The actual command itself.
             string keyStroke = split.Item2.ToLower();

@@ -61,7 +61,7 @@ namespace TwitchChatControl
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
             Console.WriteLine($"Joined #{e.Channel}. Ready to go!");
-            client.SendMessage(e.Channel, $"FFX bot activated.");
+            client.SendMessage(e.Channel, "Chat commands activated.");
         }
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
