@@ -27,7 +27,8 @@ To specify a key map for the bot to use, create an XML file in the following for
 </keyMap>
 ```
 
-Example: ffx.xml
+### Example
+ffx.xml
 ```
 <?xml version="1.0" encoding="utf-8" ?>
 <keyMap>
