@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using WindowsInput;
 using WindowsInput.Native;
 
 namespace TwitchChatControl
 {
-    class vKeys
+    class VirtualKeyboard
     {
-        public Dictionary<string, VirtualKeyCode> keyboardMapping = new Dictionary<string, VirtualKeyCode>
+        InputSimulator input = new InputSimulator();
+
+        private Dictionary<string, VirtualKeyCode> keyboardMapping = new Dictionary<string, VirtualKeyCode> (StringComparer.InvariantCultureIgnoreCase)
         {
             { "0", VirtualKeyCode.VK_0 },
             { "1", VirtualKeyCode.VK_1 },
@@ -105,5 +109,36 @@ namespace TwitchChatControl
             { "RIGHT", VirtualKeyCode.RIGHT },
             { "UP", VirtualKeyCode.UP }
         };
+
+        /// <summary>
+        /// Sends a virtual keypress for a number of repetitions, hold times, and pauses between presses.
+        /// </summary>
+        /// <param name="key">Which key to press.</param>
+        /// <param name="repetitions">How many times to repeat the keypress.</param>
+        /// <param name="holdTimeMs">How long to hold each keypress.</param>
+        /// <param name="postKeyDelayMs">How long to wait between keypresses.</param>
+        public void SendKey(string key, int repetitions, int holdTimeMs, int postKeyDelayMs)
+        {
+            // Do we have a matching VirtualKeyCode?
+            if (!keyboardMapping.ContainsKey(key)) return;
+
+            Console.WriteLine($"[DEBUG] Requested: {repetitions}x {key} for {holdTimeMs}ms");
+
+            var vkKey = keyboardMapping[key];
+
+            for (var i = 1; i <= repetitions; i++)
+            {
+                Console.Write($"[DEBUG] Sending {key} for {holdTimeMs}ms.");
+
+                // Add delay between keypresses- some games need keys 
+                // to be pressed for a bit before they pick them up.
+                input.Keyboard.KeyDown(vkKey)
+                .Sleep(holdTimeMs)
+                .KeyUp(vkKey)
+                .Sleep(postKeyDelayMs); // Delay for next keypress.
+
+                Console.WriteLine($" ... done.");
+            }
+        }
     }
 }

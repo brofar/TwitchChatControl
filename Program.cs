@@ -2,8 +2,6 @@
 using System.Configuration;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using WindowsInput;
-using WindowsInput.Native;
 using System.Xml.Linq;
 using System.Linq;
 using System.Security;
@@ -14,9 +12,9 @@ namespace TwitchChatControl
 {
     class Program
     {
-        // Keymap
-        static Dictionary<string, string> keyMap;
-        static vKeys keyboard = new vKeys();
+        // Keymap - with case insensitivity
+        static Dictionary<string, string> keyMap = new Dictionary<string, string> (StringComparer.InvariantCultureIgnoreCase);
+        static VirtualKeyboard keyboard = new VirtualKeyboard();
 
         static string username, userToken, twitchChannel;
         static Bot bot;
@@ -37,7 +35,7 @@ namespace TwitchChatControl
 
             string fileMapXml = Console.ReadLine();
 
-            Program.keyMap = LoadKeyMap(fileMapXml);
+            keyMap = LoadKeyMap(fileMapXml);
 
             foreach (KeyValuePair<string, string> kvp in keyMap)
             {
@@ -87,7 +85,7 @@ namespace TwitchChatControl
              */
 
             // Format message
-            chatMessage = ReplaceWhitespace(chatMessage.Trim().ToLower(), "");
+            chatMessage = ReplaceWhitespace(chatMessage.Trim(), "");
 
             // Check message validity for further processing
             bool isValidMessage = ValidMessage(chatMessage);
@@ -98,54 +96,33 @@ namespace TwitchChatControl
             // Begin processing message
             Console.WriteLine($"[DEBUG] Message: {chatMessage}");
 
-            var split = SplitString(chatMessage);
+            // Split the chat message
+            (int repetitions, string keyStroke, int holdTimeS) = SplitString(chatMessage);
 
             // Abort on bad string.
-            if (split.Item2 == null) return;
+            if (keyStroke == null) return;
             
-            int repetitions = (split.Item1 > 0) ? split.Item1 : 1;
+            repetitions = (repetitions > 0) ? repetitions : 1;
 
-            // If keypresses are shorter than 50ms, some games don't pick them up.
-            int holdTimeMs = (split.Item3 > 0) ? split.Item3 * 1000 : 75;
+            // If keypresses are shorter than 75ms, some games don't pick them up.
+            int holdTimeMs = (holdTimeS > 0) ? holdTimeS * 1000 : 75;
 
             double executionTimeSecs = repetitions * ((holdTimeMs + postKeyDelayMs) / 1000.0);
 
             // Prevent outrageous numbers
             if (executionTimeSecs > maxCommandTimeSecs)
             {
-                bot.sendMessage(twitchChannel, $"Commands must total less than {maxCommandTimeSecs} seconds to do. Your command would have taken {Math.Round(executionTimeSecs, 0)} seconds.");
+                bot.sendMessage(twitchChannel, $"Commands must take less than {maxCommandTimeSecs} seconds (with the required/hardcoded delays, yours would take {Math.Round(executionTimeSecs, 0)} seconds.)");
                 return;
             }
 
-            // The actual command itself.
-            string keyStroke = split.Item2.ToLower();
+            // Do we have a matching key in the user-defined keymap?
+            if (!keyMap.ContainsKey(keyStroke)) return;
 
-            // Do we actually have a matching key?
-            if (!Program.keyMap.ContainsKey(keyStroke)) return;
+            string keyToPress = keyMap[keyStroke];
 
-            Console.WriteLine($"[DEBUG] Requested: {repetitions}x {keyMap[keyStroke]} for {holdTimeMs}ms");
-
-            InputSimulator input = new InputSimulator();
-
-            var keyPress = keyMap[keyStroke];
-
-            // Filter any special keys
-            var vkKey = SpecialVKeys(keyPress);
-
-            // Put it all together
-            for (var i = 1; i <= repetitions; i++)
-            {
-                Console.Write($"[DEBUG] Sending {keyPress} for {holdTimeMs}ms.");
-
-                // Add delay between keypresses- some games need keys 
-                // to be pressed for a bit before they pick them up.
-                input.Keyboard.KeyDown(vkKey)
-                .Sleep(holdTimeMs)
-                .KeyUp(vkKey)
-                .Sleep(postKeyDelayMs); // Delay for next keypress.
-
-                Console.WriteLine($" ... done.");
-            }
+            // Send the keystroke 
+            keyboard.SendKey(keyToPress, repetitions, holdTimeMs, postKeyDelayMs);
         }
 
         /// <summary>
@@ -215,7 +192,6 @@ namespace TwitchChatControl
                 else
                 {
                     // Neither letter nor number. Probably symbol so invalidate entire message.
-                    Console.WriteLine($"[DEBUG] {c} is neither a letter nor number. Skip processing.");
                     return new Tuple<int, string, int>(0, null, 0);
                 }
             }
@@ -224,29 +200,6 @@ namespace TwitchChatControl
             int intThree = (Int32.TryParse(three, out int valThree)) ? valThree : 0;
 
             return new Tuple<int, string, int>(intOne, two, intThree);
-        }
-
-        /// <summary>
-        /// Converts certain strings to VK codes.
-        /// </summary>
-        /// <remarks>
-        /// Need to figure out how to handle symbols.
-        /// </remarks>
-        /// <param name="input">A string.</param>
-        /// <returns>
-        /// A VirtualKeyCode. Returns VirtualKeyCode.VOLUME_MUTE if no match is found.
-        /// </returns>
-        static VirtualKeyCode SpecialVKeys (string input)
-        {
-            input = input.ToUpper();
-
-            if (keyboard.keyboardMapping.ContainsKey(input))
-            {
-                return keyboard.keyboardMapping[input];
-            }
-
-            // VirtualKeyCode is not nullable, so set the value to something we'll never use as a substitute for null.
-            return VirtualKeyCode.VOLUME_MUTE;
         }
 
         /// <summary>
@@ -263,7 +216,7 @@ namespace TwitchChatControl
             var doc = new XDocument();
             try
             {
-                doc = XDocument.Load($@".\{filename}.xml");
+                doc = XDocument.Load($@".\configs\{filename}.xml");
             }
             catch (ArgumentNullException)
             {
@@ -283,7 +236,7 @@ namespace TwitchChatControl
             catch (FileNotFoundException)
             {
                 // The underlying file of the path cannot be found
-                Console.Write($"[ERROR] {filename}.xml not found in program directory.");
+                Console.Write($"[ERROR] {filename}.xml not found in the configs directory.");
                 Console.ReadLine();
                 Environment.Exit(1);
             }
@@ -292,6 +245,7 @@ namespace TwitchChatControl
             var allItems = rootNodes.ToDictionary(n => n.Name.ToString().ToLower(), n => n.Value.ToString().ToLower());
             return allItems;
         }
+
         /// <summary>
         /// Replaces whitespace in a string
         /// </summary>
