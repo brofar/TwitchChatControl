@@ -117,7 +117,7 @@ namespace TwitchChatControl
         /// <param name="repetitions">How many times to repeat the keypress.</param>
         /// <param name="holdTimeMs">How long to hold each keypress.</param>
         /// <param name="postKeyDelayMs">How long to wait between keypresses.</param>
-        public void SendKey(string key, int repetitions, int holdTimeMs, int postKeyDelayMs)
+        public void SendRepeatKey(string key, int repetitions, int holdTimeMs, int postKeyDelayMs)
         {
             // Do we have a matching VirtualKeyCode?
             if (!keyboardMapping.ContainsKey(key)) return;
@@ -130,15 +130,19 @@ namespace TwitchChatControl
             {
                 Console.Write($"[DEBUG] Sending {key} for {holdTimeMs}ms.");
 
-                // Add delay between keypresses- some games need keys 
-                // to be pressed for a bit before they pick them up.
-                input.Keyboard.KeyDown(vkKey)
-                .Sleep(holdTimeMs)
-                .KeyUp(vkKey)
-                .Sleep(postKeyDelayMs); // Delay for next keypress.
+                SendKey(vkKey, holdTimeMs, postKeyDelayMs);
 
                 Console.WriteLine($" ... done.");
             }
+        }
+        private void SendKey (VirtualKeyCode vkKey, int holdTimeMs, int postKeyDelayMs)
+        {
+            // Add delay between keypresses- some games need keys 
+            // to be pressed for a bit before they pick them up.
+            input.Keyboard.KeyDown(vkKey)
+            .Sleep(holdTimeMs)
+            .KeyUp(vkKey)
+            .Sleep(postKeyDelayMs); // Delay for next keypress.
         }
     }
 }

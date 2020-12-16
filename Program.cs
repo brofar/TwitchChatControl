@@ -122,7 +122,7 @@ namespace TwitchChatControl
             string keyToPress = keyMap[keyStroke];
 
             // Send the keystroke 
-            keyboard.SendKey(keyToPress, repetitions, holdTimeMs, postKeyDelayMs);
+            keyboard.SendRepeatKey(keyToPress, repetitions, holdTimeMs, postKeyDelayMs);
         }
 
         /// <summary>
