@@ -111,7 +111,7 @@ namespace TwitchChatControl
         };
 
         /// <summary>
-        /// Sends a virtual keypress for a number of repetitions, hold times, and pauses between presses.
+        /// Loops a virtual keypress for a number of repetitions, hold times, and pauses between presses.
         /// </summary>
         /// <param name="key">Which key to press.</param>
         /// <param name="repetitions">How many times to repeat the keypress.</param>
@@ -135,6 +135,13 @@ namespace TwitchChatControl
                 Console.WriteLine($" ... done.");
             }
         }
+
+        /// <summary>
+        /// Presses and holds a virtual key for a specified amount of time.
+        /// </summary>
+        /// <param name="vkKey">A VirtualKeyCode.</param>
+        /// <param name="holdTimeMs">How long to hold each keypress.</param>
+        /// <param name="postKeyDelayMs">How long to wait between keypresses.</param>
         private void SendKey (VirtualKeyCode vkKey, int holdTimeMs, int postKeyDelayMs)
         {
             // Add delay between keypresses- some games need keys 
