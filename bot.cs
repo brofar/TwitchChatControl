@@ -83,7 +83,15 @@ namespace TwitchChatControl
         }
         public void sendMessage(string channel, string message)
         {
-            client.SendMessage(channel, message);
+            try
+            {
+                // TODO: Exception handling here.
+                client.SendMessage(channel, message);
+            }
+            catch (TwitchLib.Client.Exceptions.BadStateException e)
+            {
+                client.Connect();
+            }
         }
     }
 }

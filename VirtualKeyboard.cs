@@ -9,7 +9,7 @@ namespace TwitchChatControl
     {
         InputSimulator input = new InputSimulator();
 
-        private Dictionary<string, VirtualKeyCode> keyboardMapping = new Dictionary<string, VirtualKeyCode> (StringComparer.InvariantCultureIgnoreCase)
+        private Dictionary<string, VirtualKeyCode> keyboardMapping = new Dictionary<string, VirtualKeyCode> (StringComparer.OrdinalIgnoreCase)
         {
             { "0", VirtualKeyCode.VK_0 },
             { "1", VirtualKeyCode.VK_1 },
@@ -119,18 +119,44 @@ namespace TwitchChatControl
         /// <param name="postKeyDelayMs">How long to wait between keypresses.</param>
         public void SendRepeatKey(string key, int repetitions, int holdTimeMs, int postKeyDelayMs)
         {
-            // Do we have a matching VirtualKeyCode?
-            if (!keyboardMapping.ContainsKey(key)) return;
-
             Console.WriteLine($"[DEBUG] Requested: {repetitions}x {key} for {holdTimeMs}ms");
 
-            var vkKey = keyboardMapping[key];
+            var keyStrokes = key.Split('+');
+            var modifiedKeys = (keyStrokes.Length > 1);
+            var modifiers = new List<VirtualKeyCode>();
+
+            foreach (var keyStroke in keyStrokes)
+            {
+                // Do we have a matching VirtualKeyCode?
+                if (!keyboardMapping.ContainsKey(keyStroke)) return;
+            }
+
+            // The primary key to press is the last element in the array.
+            var vkKey = keyboardMapping[keyStrokes[keyStrokes.Length - 1]];
+
+            if (modifiedKeys)
+            {
+                Array.Resize(ref keyStrokes, keyStrokes.Length - 1);
+
+                foreach (var modifierKey in keyStrokes)
+                {
+                    modifiers.Add(keyboardMapping[modifierKey]);
+                }
+                    
+            }
 
             for (var i = 1; i <= repetitions; i++)
             {
                 Console.Write($"[DEBUG] Sending {key} for {holdTimeMs}ms.");
 
-                SendKey(vkKey, holdTimeMs, postKeyDelayMs);
+                if(modifiedKeys)
+                {
+                    SendModifiedKey(modifiers, vkKey, holdTimeMs, postKeyDelayMs);
+                }
+                else
+                {
+                    SendKey(vkKey, holdTimeMs, postKeyDelayMs);
+                }
 
                 Console.WriteLine($" ... done.");
             }
@@ -139,17 +165,49 @@ namespace TwitchChatControl
         /// <summary>
         /// Presses and holds a virtual key for a specified amount of time.
         /// </summary>
-        /// <param name="vkKey">A VirtualKeyCode.</param>
+        /// <param name="vkKey">The <see cref="VirtualKeyCode"/> for the key.</param>
         /// <param name="holdTimeMs">How long to hold each keypress.</param>
         /// <param name="postKeyDelayMs">How long to wait between keypresses.</param>
-        private void SendKey (VirtualKeyCode vkKey, int holdTimeMs, int postKeyDelayMs)
+        private void SendKey(VirtualKeyCode vkKey, int holdTimeMs, int postKeyDelayMs)
         {
             // Add delay between keypresses- some games need keys 
             // to be pressed for a bit before they pick them up.
-            input.Keyboard.KeyDown(vkKey)
-            .Sleep(holdTimeMs)
-            .KeyUp(vkKey)
-            .Sleep(postKeyDelayMs); // Delay for next keypress.
+            input.Keyboard
+                .KeyDown(vkKey)
+                .Sleep(holdTimeMs)
+                .KeyUp(vkKey)
+                .Sleep(postKeyDelayMs); // Delay for next keypress.
+        }
+
+        /// <summary>
+        /// Simulates a simple modified keystroke like CTRL-C where CTRL is the modifierKey and C is the key.
+        /// The flow is Modifier KeyDown, KeyDown, Pause, KeyUp, Modifier KeyUp.
+        /// </summary>
+        /// <param name="modifierKeys">List of <see cref="VirtualKeyCode"/> for the modifier keys.</param>
+        /// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
+        /// <param name="holdTimeMs">How long to hold each keypress.</param>
+        /// <param name="postKeyDelayMs">How long to wait between keypresses.</param>
+        private void SendModifiedKey(List<VirtualKeyCode> modifierKeys, VirtualKeyCode keyCode, int holdTimeMs, int postKeyDelayMs)
+        {
+            // Press all the modifier keys
+            foreach (var modKey in modifierKeys)
+            {
+                input.Keyboard.KeyDown(modKey);
+            }
+
+            // Press they key itself
+            input.Keyboard
+                .KeyDown(keyCode)
+                .Sleep(holdTimeMs)
+                .KeyUp(keyCode);
+
+            // Release all the modifier keys
+            foreach (var modKey in modifierKeys)
+            {
+                input.Keyboard.KeyUp(modKey);
+            }
+
+            input.Keyboard.Sleep(postKeyDelayMs); // Delay for next keypress.
         }
     }
 }

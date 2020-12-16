@@ -4,6 +4,20 @@
   <Down>Down</Down>
   <Left>Left</Left>
   <Right>Right</Right>
+  <UR>UP+RIGHT</UR>
+  <UL>UP+LEFT</UL>
+  <DR>DOWN+RIGHT</DR>
+  <DL>DOWN+LEFT</DL>
+  <LR>LEFT+RIGHT</LR>
+  <URX>UP+RIGHT+C</URX>
+  <ULX>UP+LEFT+C</ULX>
+  <DRX>DOWN+RIGHT+C</DRX>
+  <DLX>DOWN+LEFT+C</DLX>
+  <LRX>LEFT+RIGHT+C</LRX>
+  <UX>UP+C</UX>
+  <DX>DOWN+C</DX>
+  <LX>LEFT+C</LX>
+  <RX>RIGHT+C</RX>
   <X>C</X>
   <O>X</O>
   <S>Z</S>

@@ -12,10 +12,10 @@ namespace TwitchChatControl
 {
     class Program
     {
-        static string versionNumber = "2020.12.15.2";
+        static string versionNumber = "2020.12.16.1";
 
         // Keymap - with case insensitivity
-        static Dictionary<string, string> keyMap = new Dictionary<string, string> (StringComparer.InvariantCultureIgnoreCase);
+        static Dictionary<string, string> keyMap = new Dictionary<string, string>();
         static VirtualKeyboard keyboard = new VirtualKeyboard();
 
         static string username, userToken, twitchChannel;
@@ -89,11 +89,8 @@ namespace TwitchChatControl
             // Format message
             chatMessage = ReplaceWhitespace(chatMessage.Trim(), "");
 
-            // Check message validity for further processing
-            bool isValidMessage = ValidMessage(chatMessage);
-
-            // Don't waste resources decoding a chat message if it's not valid.
-            if (!isValidMessage) return;
+            // Don't waste resources decoding a chat message if it's too long.
+            if (chatMessage.Length >= 10) return;
 
             // Begin processing message
             Console.WriteLine($"[DEBUG] Message: {chatMessage}");
@@ -103,7 +100,10 @@ namespace TwitchChatControl
 
             // Abort on bad string.
             if (keyStroke == null) return;
-            
+
+            // Do we have a matching key in the user-defined keymap?
+            if (!keyMap.ContainsKey(keyStroke)) return;
+
             repetitions = (repetitions > 0) ? repetitions : 1;
 
             // If keypresses are shorter than 75ms, some games don't pick them up.
@@ -118,37 +118,12 @@ namespace TwitchChatControl
                 return;
             }
 
-            // Do we have a matching key in the user-defined keymap?
-            if (!keyMap.ContainsKey(keyStroke)) return;
+            Console.WriteLine($"[DEBUG] keyMap contains {keyStroke}");
 
             string keyToPress = keyMap[keyStroke];
 
             // Send the keystroke 
             keyboard.SendRepeatKey(keyToPress, repetitions, holdTimeMs, postKeyDelayMs);
-        }
-
-        /// <summary>
-        /// Checks if a message is valid for further processing/attempted decoding by the application.
-        /// </summary>
-        /// <remarks>
-        /// We want to avoid processing every single chat message as most will likely be irrelevant to the bot.
-        /// There are certain checks we can make to rule out unprocessable messages from the get-go.
-        /// For example, the commands we consume won't ever contain a space, nor will they be particularly long strings.
-        /// We can immediately rule out chat messages that meet either of those criteria and not waste resources on them.
-        /// </remarks>
-        /// <param name="message">A chat message string.</param>
-        /// <returns>
-        /// An isValid boolean.
-        /// </returns>
-        static bool ValidMessage (string message)
-        {
-            // Commands are not longer than 10 characters
-            bool tooLong = message.Length >= 10;
-
-            // Commands do not have spaces
-            bool hasSpace = message.Contains(" ");
-
-            return (!tooLong && !hasSpace);
         }
 
         /// <summary>
@@ -244,7 +219,7 @@ namespace TwitchChatControl
             }
             
             var rootNodes = doc.Root.DescendantNodes().OfType<XElement>();
-            var allItems = rootNodes.ToDictionary(n => n.Name.ToString().ToLower(), n => n.Value.ToString().ToLower());
+            var allItems = rootNodes.ToDictionary(n => n.Name.ToString().ToLower(), n => n.Value.ToString().ToLower(), StringComparer.OrdinalIgnoreCase);
             return allItems;
         }
 
