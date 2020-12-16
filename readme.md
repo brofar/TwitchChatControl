@@ -13,6 +13,7 @@
 * ~~Installation instructions.~~
 * ~~Configuration/Setup instructions (Adding to Twitch).~~
 * ~~Handle decimal numbers/symbols in input (reject them)~~
+* ~~Handle multi key presses~~
 * Handle sequences of commands
 
 ## Installation
