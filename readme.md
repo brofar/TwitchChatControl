@@ -11,7 +11,7 @@
 ## To Do
 * ~~Finish the damn bot.~~
 * ~~Installation instructions.~~
-* ~~Configuration instructions.~~
+* Configuration/Setup instructions (Adding to Twitch).
 * ~~Handle decimal numbers/symbols in input (reject them)~~
 * Handle sequences of commands
 
@@ -27,7 +27,29 @@ To specify a key map for the bot to use, create an XML file in the following for
 </keyMap>
 ```
 
-Example: See ffx.xml
+### Example
+ffx.xml
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<keyMap>
+  <Up>Up</Up>
+  <Down>Down</Down>
+  <Left>Left</Left>
+  <Right>Right</Right>
+  <X>C</X>
+  <O>X</O>
+  <S>Z</S>
+  <T>V</T>
+  <L>S</L>
+  <R>D</R>
+  <char>A</char>
+  <Start>B</Start>
+  <Select>N</Select>
+  <turbo>F1</turbo>
+  <enc>F3</enc>
+  <ab>F4</ab>
+</keyMap>
+```
 
 ## Future Improvements
 * Hook for channel point redemptions
