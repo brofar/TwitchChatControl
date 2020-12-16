@@ -12,6 +12,8 @@ namespace TwitchChatControl
 {
     class Program
     {
+        static string versionNumber = "2020.12.15.2";
+
         // Keymap - with case insensitivity
         static Dictionary<string, string> keyMap = new Dictionary<string, string> (StringComparer.InvariantCultureIgnoreCase);
         static VirtualKeyboard keyboard = new VirtualKeyboard();
@@ -29,7 +31,7 @@ namespace TwitchChatControl
         static void Main(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("Twitch Chat Control");
+            Console.WriteLine($"Twitch Chat Control {versionNumber}");
             Console.WriteLine("Specify keymap file:");
             Console.ResetColor();
 
