@@ -27,6 +27,8 @@ namespace TwitchChatControl
         /// <param name="twitchChannel">The channel for the bot to join.</param>
         public Bot(string botName, string oauthToken, string twitchChannel)
         {
+            oauthToken = (oauthToken.StartsWith("oauth:")) ? oauthToken.Substring(6) : oauthToken;
+
             ConnectionCredentials credentials = new ConnectionCredentials(botName, oauthToken);
             var clientOptions = new ClientOptions
             {
