@@ -15,6 +15,7 @@
 * ~~Handle decimal numbers/symbols in input (reject them)~~
 * ~~Handle multi key presses~~
 * Handle sequences of commands
+* Rewrite configuration instructions
 
 ## Installation
 See the [Releases page](https://github.com/brofar/TwitchChatControl/releases), download the latest file, extract, configure, run.
