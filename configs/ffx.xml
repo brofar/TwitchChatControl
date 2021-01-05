@@ -1,33 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <keyMap>
+  <!-- Base Movement -->
   <Up>Up</Up>
   <Down>Down</Down>
   <Left>Left</Left>
   <Right>Right</Right>
+
+  <!-- Diagonal Movement -->
   <UR>UP+RIGHT</UR>
   <UL>UP+LEFT</UL>
   <DR>DOWN+RIGHT</DR>
   <DL>DOWN+LEFT</DL>
   <LR>LEFT+RIGHT</LR>
-  <URX>UP+RIGHT+C</URX>
-  <ULX>UP+LEFT+C</ULX>
-  <DRX>DOWN+RIGHT+C</DRX>
-  <DLX>DOWN+LEFT+C</DLX>
-  <LRX>LEFT+RIGHT+C</LRX>
+
+  <!-- Jecht Shot Movement -->
   <UX>UP+C</UX>
   <DX>DOWN+C</DX>
   <LX>LEFT+C</LX>
   <RX>RIGHT+C</RX>
+
+  <!-- Main Buttons -->
   <X>C</X>
   <O>X</O>
   <S>Z</S>
   <T>V</T>
+
+  <!-- Shoulder Buttons -->
   <L>S</L>
   <R>D</R>
+
+  <!-- Other Buttons -->
   <char>A</char>
   <Start>B</Start>
   <Select>N</Select>
+
+  <!-- "Cheats" -->
   <turbo>F1</turbo>
   <enc>F3</enc>
   <ab>F4</ab>
+
+  <!-- Auron's Overdrives -->
+  <df>DOWN-LEFT-UP-RIGHT-S-D-X-C</df>
+  <ss>V-X-Z-C-LEFT-RIGHT-C</ss>
+  <bb>UP-S-DOWN-D-RIGHT-LEFT-V</bb>
+  <to>C-RIGHT-D-LEFT-S-V</to>
+
+  <!-- Lulu's Overdrive -->
+  <fury>LEFT-RIGHT</fury>
 </keyMap>

@@ -72,11 +72,13 @@ namespace TwitchChatControl
             OnBotMessageReceived?.Invoke(this, e.ChatMessage.Message);
         }
 
+        // Handle this stuff later for future features.
         private void Client_OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
         {
 
         }
 
+        // Handle this stuff later for future features.
         private void Client_OnNewSubscriber(object sender, OnNewSubscriberArgs e)
         {
 
@@ -91,6 +93,7 @@ namespace TwitchChatControl
             catch (TwitchLib.Client.Exceptions.BadStateException e)
             {
                 client.Connect();
+                client.SendMessage(channel, message);
             }
         }
     }

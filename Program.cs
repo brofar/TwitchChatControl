@@ -23,6 +23,10 @@ namespace TwitchChatControl
 
         static int maxCommandTimeSecs = 10;
 
+        static int defaultRepetitions = 1;
+        static int defaultHoldTimeMs = 70;
+        static int defaultPostKeyDelayMs = 200;
+
         // If you plan to do this more than once, create and store a Regex instance. This will save the 
         // overhead of constructing it every time, which is more expensive than you might think.
         // https://stackoverflow.com/questions/6219454/efficient-way-to-remove-all-whitespace-from-string
@@ -68,7 +72,7 @@ namespace TwitchChatControl
         static void bot_OnBotMessageReceived (object sender, string chatMessage)
         {
             // Decode commands into keystrokes here.
-            MessageToKeystroke(chatMessage, 300);
+            MessageToKeystroke(chatMessage, defaultPostKeyDelayMs);
         }
 
         /// <summary>
@@ -104,10 +108,10 @@ namespace TwitchChatControl
             // Do we have a matching key in the user-defined keymap?
             if (!keyMap.ContainsKey(keyStroke)) return;
 
-            repetitions = (repetitions > 0) ? repetitions : 1;
+            repetitions = (repetitions > 0) ? repetitions : defaultRepetitions;
 
             // If keypresses are shorter than 75ms, some games don't pick them up.
-            int holdTimeMs = (holdTimeS > 0) ? holdTimeS * 1000 : 75;
+            int holdTimeMs = (holdTimeS > 0) ? holdTimeS * 1000 : defaultHoldTimeMs;
 
             double executionTimeSecs = repetitions * ((holdTimeMs + postKeyDelayMs) / 1000.0);
 
@@ -123,7 +127,7 @@ namespace TwitchChatControl
             string keyToPress = keyMap[keyStroke];
 
             // Send the keystroke 
-            keyboard.SendRepeatKey(keyToPress, repetitions, holdTimeMs, postKeyDelayMs);
+            keyboard.ProcessKeystroke(keyToPress, repetitions, holdTimeMs, postKeyDelayMs);
         }
 
         /// <summary>

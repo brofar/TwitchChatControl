@@ -111,6 +111,32 @@ namespace TwitchChatControl
         };
 
         /// <summary>
+        /// Takes the macro syntax and translates it into keystrokes, determining repetition and sequences.
+        /// </summary>
+        /// <param name="key">The macro to send.</param>
+        /// <param name="repetitions">How many times to repeat the keypress.</param>
+        /// <param name="holdTimeMs">How long to hold each keypress.</param>
+        /// <param name="postKeyDelayMs">How long to wait between keypresses.</param>
+        public void ProcessKeystroke(string key, int repetitions, int holdTimeMs, int postKeyDelayMs)
+        {
+            // Process sequences, then combinations (modifiers)
+            // If it contains a -, it's a sequence.
+            var keyStrokes = key.Split('-');
+
+            // Remove any repeats/hold time if it's a sequence
+            if (keyStrokes.Length > 1)
+            {
+                repetitions = 1;
+                holdTimeMs = 75;
+            }
+
+            foreach (var keyStroke in keyStrokes)
+            {
+                SendRepeatKey(keyStroke, repetitions, holdTimeMs, postKeyDelayMs);
+            }
+        }
+
+        /// <summary>
         /// Loops a virtual keypress for a number of repetitions, hold times, and pauses between presses.
         /// </summary>
         /// <param name="key">Which key to press.</param>
@@ -121,6 +147,7 @@ namespace TwitchChatControl
         {
             Console.WriteLine($"[DEBUG] Requested: {repetitions}x {key} for {holdTimeMs}ms");
 
+            // If it contains +, it's a modifier.
             var keyStrokes = key.Split('+');
             var modifiedKeys = (keyStrokes.Length > 1);
             var modifiers = new List<VirtualKeyCode>();
