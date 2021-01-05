@@ -47,6 +47,7 @@ namespace TwitchChatControl
 
             keyMap = LoadKeyMap(fileMapXml);
 
+            // Display active key mappings in console.
             foreach (KeyValuePair<string, string> kvp in keyMap)
             {
                 Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
@@ -54,19 +55,26 @@ namespace TwitchChatControl
 
             NameValueCollection settings = ConfigurationManager.AppSettings;
 
+            // Get bot's settings from config
             username = settings.Get("username");
             userToken = settings.Get("token");
             twitchChannel = settings.Get("channel");
 
+            // Create bot
             bot = new Bot(username, userToken, twitchChannel);
+
+            // Set message received event handler
             bot.OnBotMessageReceived += bot_OnBotMessageReceived;
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Hit enter at any time to exit.");
+            Console.WriteLine("==============================");
             Console.ResetColor();
 
+            // Wait for user console input to kill the bot.
             Console.ReadLine();
 
+            // Send message to chat when bot closes
             bot.sendMessage(twitchChannel, "Chat commands deactivated.");
         }
 
