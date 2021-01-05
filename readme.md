@@ -21,6 +21,7 @@
 
 ## Installation
 See the [Releases page](https://github.com/brofar/TwitchChatControl/releases), download the latest file, extract, configure, run.
+(No releases yet? It's probably because I'm a perfectionist and am still finding bugs or fine-tuning)
 
 ## Configuration
 1. Extract the zip file from the Releases page.
