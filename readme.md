@@ -13,9 +13,14 @@
 * ~~Installation instructions.~~
 * ~~Configuration/Setup instructions (Adding to Twitch).~~
 * ~~Handle decimal numbers/symbols in input (reject them)~~
+* ~~Handle multi key presses~~
 * Handle sequences of commands
+* Rewrite configuration instructions
 * Explore targeted window for sendkeys
 * Explore async
+* Explore targeted window for sendkeys
+* Explore async
+* Rewrite configuration instructions
 
 ## Installation
 See the [Releases page](https://github.com/brofar/TwitchChatControl/releases), download the latest file, extract, configure, run.
