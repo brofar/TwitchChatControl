@@ -34,8 +34,12 @@ namespace TwitchChatControl
 
         static void Main(string[] args)
         {
+            // Set the console title
+            Console.Title = $"Twitch Chat Control v{versionNumber}";
+
+            // Get the map file
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"Twitch Chat Control {versionNumber}");
+            Console.WriteLine($"Twitch Chat Control v{versionNumber}");
             Console.WriteLine("Specify keymap file:");
             Console.ResetColor();
 
