@@ -49,9 +49,11 @@ See the [Releases page](https://github.com/brofar/TwitchChatControl/releases), d
 ### Key Maps
 Key maps follow this format: `<[chat message]>[key to press]</[chat message]>`
 
-**Key Combinations**: To hold multiple keys at the same time use the `+` symbol. `<[chat message]>[key 1]+[key 2]</[chat message]>`
+#### Key Combinations
+To hold multiple keys at the same time use the `+` symbol. `<[chat message]>[key 1]+[key 2]</[chat message]>`
 
-**Key Sequences**: To send multiple keys with a single chat message `-` symbol. `<[chat message]>[key 1]-[key 2]</[chat message]>`
+#### Key Sequences
+To send multiple keys with a single chat message `-` symbol. `<[chat message]>[key 1]-[key 2]</[chat message]>`
 
 
 #### Example
