@@ -20,11 +20,10 @@
 - [ ] Explore async
 
 ## Installation
-See the [Releases page](https://github.com/brofar/TwitchChatControl/releases), download the latest file, extract, configure, run.
+See the [Releases page](https://github.com/brofar/TwitchChatControl/releases), download the latest file, extract, configure (see below), run TwitchChatControl.exe.
 (No releases yet? It's probably because I'm a perfectionist and am still finding bugs or fine-tuning)
 
 ## Configuration
-1. Extract the zip file from the Releases page.
 1. Rename settings.sample.xml to settings.xml.
 1. Fill in settings.xml per the table below.
 1. If needed, create a key map and save it in the configs folder.
