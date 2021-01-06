@@ -25,7 +25,7 @@ namespace TwitchChatControl
 
         static int defaultRepetitions = 1;
         static int defaultHoldTimeMs = 70;
-        static int defaultPostKeyDelayMs = 200;
+        static int defaultPostKeyDelayMs = 225;
 
         // If you plan to do this more than once, create and store a Regex instance. This will save the 
         // overhead of constructing it every time, which is more expensive than you might think.
@@ -43,9 +43,10 @@ namespace TwitchChatControl
             Console.WriteLine("Specify keymap file:");
             Console.ResetColor();
 
-            string fileMapXml = Console.ReadLine();
+            string keyMapXml = Console.ReadLine();
 
-            keyMap = LoadKeyMap(fileMapXml);
+            string keyMapPath = $@"configs\{keyMapXml}";
+            keyMap = LoadXML(keyMapPath);
 
             // Display active key mappings in console.
             foreach (KeyValuePair<string, string> kvp in keyMap)
@@ -53,12 +54,12 @@ namespace TwitchChatControl
                 Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
             }
 
-            NameValueCollection settings = ConfigurationManager.AppSettings;
+            var settings = LoadXML("settings.xml");
 
             // Get bot's settings from config
-            username = settings.Get("username");
-            userToken = settings.Get("token");
-            twitchChannel = settings.Get("channel");
+            username = settings["username"];
+            userToken = settings["token"];
+            twitchChannel = settings["channel"];
 
             // Create bot
             bot = new Bot(username, userToken, twitchChannel);
@@ -67,6 +68,7 @@ namespace TwitchChatControl
             bot.OnBotMessageReceived += bot_OnBotMessageReceived;
 
             Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("==============================");
             Console.WriteLine("Hit enter at any time to exit.");
             Console.WriteLine("==============================");
             Console.ResetColor();
@@ -196,20 +198,20 @@ namespace TwitchChatControl
         }
 
         /// <summary>
-        /// Reads a keymap from an xml file
+        /// Reads an xml file
         /// </summary>
         /// <param name="filename">A filename string.</param>
         /// <returns>
         /// A dictionary containing the keys/values from the XML file.
         /// </returns>
-        static Dictionary<string, string> LoadKeyMap(string filename)
+        static Dictionary<string, string> LoadXML(string filename)
         {
             if (filename.EndsWith(".xml")) filename = filename.Substring(0, filename.Length - 4);
 
             var doc = new XDocument();
             try
             {
-                doc = XDocument.Load($@".\configs\{filename}.xml");
+                doc = XDocument.Load($@".\{filename}.xml");
             }
             catch (ArgumentNullException)
             {
