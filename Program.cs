@@ -12,7 +12,7 @@ namespace TwitchChatControl
 {
     class Program
     {
-        static string versionNumber = "2021.01.04.1";
+        static string versionNumber = "2021.01.05.1";
 
         // Keymap - with case insensitivity
         static Dictionary<string, string> keyMap = new Dictionary<string, string>();
